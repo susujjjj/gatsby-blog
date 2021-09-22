@@ -3,6 +3,40 @@ import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 import PostItem from 'components/Main/PostItem';
 
+export type PostType = {
+  node: {
+    id: string;
+    frontmatter: {
+      title: string;
+      summary: string;
+      date: string;
+      categories: string[];
+      thumbnail: {
+        publicURL: string;
+      };
+    };
+  };
+};
+
+interface PostListProps {
+  posts: PostType[];
+}
+
+const PostListWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
+  width: 768px;
+  margin: 0 auto;
+  padding: 50px 0 100px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    width: 100%;
+    padding: 50px 20px;
+  }
+`;
+
 const POST_ITEM_DATA = {
   title: 'Post Item Title',
   date: '2020.01.29.',
@@ -14,29 +48,43 @@ const POST_ITEM_DATA = {
   link: '<https://www.google.co.kr/>',
 };
 
-const PostListWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 20px;
-  width: 768px;
-  margin: 0 auto;
-  padding: 50px 0 100px;
+// const PostListWrapper = styled.div`
+//   display: grid;
+//   grid-template-columns: 1fr 1fr;
+//   grid-gap: 20px;
+//   width: 768px;
+//   margin: 0 auto;
+//   padding: 50px 0 100px;
 
-  @media (max-width: 768px) {
-    //768px일때 카드 하나씩
-    grid-template-columns: 1fr;
-    width: 100%;
-    padding: 50px 20px;
-  }
-`;
+//   @media (max-width: 768px) {
+//     //768px일때 카드 하나씩
+//     grid-template-columns: 1fr;
+//     width: 100%;
+//     padding: 50px 20px;
+//   }
+// `;
 
-const PostList: FunctionComponent = function () {
+const PostList: FunctionComponent<PostListProps> = function ({ posts }) {
   return (
     <PostListWrapper>
-      <PostItem {...POST_ITEM_DATA} />
-      <PostItem {...POST_ITEM_DATA} />
-      <PostItem {...POST_ITEM_DATA} />
-      <PostItem {...POST_ITEM_DATA} />
+      {posts.map(
+        ({
+          node: {
+            id,
+            frontmatter: {
+              thumbnail: { publicURL },
+              ...rest
+            },
+          },
+        }: PostType) => (
+          <PostItem
+            {...rest}
+            thumbnail={publicURL}
+            link="<https://www.google.co.kr/>"
+            key={id}
+          />
+        ),
+      )}
     </PostListWrapper>
   );
 };
