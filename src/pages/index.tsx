@@ -5,6 +5,7 @@ import Footer from 'components/Common/Footer';
 import CategoryList from 'components/Main/CategoryList';
 import Introduction from 'components/Main/Introduction';
 import PostList, { PostType } from 'components/Main/PostList';
+import { ProfileImageProps } from 'components/Main/ProfileImage';
 import { graphql } from 'gatsby';
 
 const CATEGORY_LIST = {
@@ -24,18 +25,27 @@ interface IndexPageProps {
     allMarkdownRemark: {
       edges: PostType[];
     };
+    file: {
+      childImageSharp: {
+        fluid: ProfileImageProps['profileImage'];
+      };
+    };
   };
 }
 
 const IndexPage: FunctionComponent<IndexPageProps> = function ({
   data: {
     allMarkdownRemark: { edges },
+    file: {
+      childImageSharp: { fluid },
+    },
   },
 }) {
   return (
     <Container>
       <GlobalStyle />
-      <Introduction />
+      <Introduction profileImage={fluid} />
+      {/* profileImage={fluid} */}
       <CategoryList selectedCategory="Web" categoryList={CATEGORY_LIST} />
       <PostList posts={edges} />
       <Footer />
@@ -59,9 +69,25 @@ export const queryPostList = graphql`
             date(formatString: "YYYY.MM.DD.")
             categories
             thumbnail {
-              publicURL
+              childImageSharp {
+                fluid(
+                  maxWidth: 768
+                  maxHeight: 200
+                  fit: INSIDE
+                  quality: 100
+                ) {
+                  ...GatsbyImageSharpFluid_withWebp
+                }
+              }
             }
           }
+        }
+      }
+    }
+    file(name: { eq: "profile-image" }) {
+      childImageSharp {
+        fluid(maxWidth: 120, maxHeight: 120, fit: INSIDE, quality: 100) {
+          ...GatsbyImageSharpFluid_withWebp
         }
       }
     }

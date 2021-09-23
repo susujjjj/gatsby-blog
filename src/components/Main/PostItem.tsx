@@ -2,13 +2,19 @@
 import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 import { Link } from 'gatsby';
+import Img, { FluidObject } from 'gatsby-image';
+//gatsby-image 라이브러리에서는 Img라는 컴포넌트를 제공
 
 interface PostItemProps {
   title: string;
   date: string;
   categories: string[];
   summary: string;
-  thumbnail: string;
+  thumbnail: {
+    childImageSharp: {
+      fluid: FluidObject;
+    };
+  };
   link: string;
 }
 
@@ -25,11 +31,13 @@ const PostItemWrapper = styled(Link)`
   }
 `;
 
-const ThumbnailImage = styled.img`
+const ThumbnailImage = styled(Img)`
+  //gatsby-image 라이브러리에서는 Img라는 컴포넌트를 제공
   width: 100%;
   height: 200px;
   border-radius: 10px 10px 0 0;
-  object-fit: cover;
+  /* object-fit: cover; */
+  //object-fit 속성은 fluid 이미지 데이터 내에 존재하기 때문에 지워주도록 하겠습니다.
 `;
 
 const PostItemContent = styled.div`
@@ -93,18 +101,21 @@ const PostItem: FunctionComponent<PostItemProps> = function ({
   date,
   categories,
   summary,
-  thumbnail,
+  thumbnail: {
+    childImageSharp: { fluid },
+  },
   link,
 }) {
   return (
     <PostItemWrapper to={link}>
-      <ThumbnailImage src={thumbnail} alt="Post Item Image" />
+      <ThumbnailImage fluid={fluid} alt="Post Item Image" />
+
       <PostItemContent>
         <Title>{title}</Title>
         <Date>{date}</Date>
         <Category>
-          {categories.map(category => (
-            <CategoryItem key={category}>{category}</CategoryItem>
+          {categories.map(item => (
+            <CategoryItem key={item}>{item}</CategoryItem>
           ))}
         </Category>
         <Summary>{summary}</Summary>

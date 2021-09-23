@@ -2,6 +2,7 @@
 import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 import PostItem from 'components/Main/PostItem';
+import { FluidObject } from 'gatsby-image';
 
 export type PostType = {
   node: {
@@ -12,7 +13,9 @@ export type PostType = {
       date: string;
       categories: string[];
       thumbnail: {
-        publicURL: string;
+        childImageSharp: {
+          fluid: FluidObject;
+        };
       };
     };
   };
@@ -67,7 +70,14 @@ const POST_ITEM_DATA = {
 const PostList: FunctionComponent<PostListProps> = function ({ posts }) {
   return (
     <PostListWrapper>
-      {posts.map(
+      {posts.map(({ node: { id, frontmatter } }: PostType) => (
+        <PostItem
+          {...frontmatter}
+          link="<https://www.google.co.kr/>"
+          key={id}
+        />
+      ))}
+      {/* {posts.map(
         ({
           node: {
             id,
@@ -84,7 +94,7 @@ const PostList: FunctionComponent<PostListProps> = function ({ posts }) {
             key={id}
           />
         ),
-      )}
+      )} */}
     </PostListWrapper>
   );
 };
